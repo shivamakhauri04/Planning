@@ -14,11 +14,25 @@ class GraphNode:
     def __init__(self,data,level,fvalue):
         self.data = data
         self.level = level
-        self.fvalue = fvalue
+        self.fvalue = fvalue 
 
 class Astar:
+    def __init__(self,size):
+        self.n = size
+        self.open = []
+        self.closed = []
+
+    def inputMatrix(self):
+        data = []
+        for i  in range(self.n):
+            row = input().split(" ")
+            data.append(row)
+        return data
+
     def main(self):
+        print("input the start matrix(3*3)- Enter the data rowwise with spaces in between elements")
+        initialMatrix = self.inputMatrix()
 
 
-puzzle = Astar()
-puzzle.process()
+puzzle = Astar(3)
+puzzle.main()
