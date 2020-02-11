@@ -50,7 +50,19 @@ class Astar:
         initialMatrix = GraphNode(initialMatrix,0,0)
         initialMatrix.fvalue = self.f_score(initialMatrix,goalMatrix)
         self.open.append(initialMatrix)
-
+        # Creating recursion
+        while True:
+            current_matrix = self.open[0]
+            print("")
+            print("######################")
+            for i in current_matrix.data:
+                for j in i:
+                    print(j)
+                print("")
+        # limiting condition for recursion so that doesn't run infinitely
+        if(self.h_score(current_matrix.data,goal)==0):
+            break
+        
 
 
 
