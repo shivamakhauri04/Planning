@@ -16,6 +16,42 @@ class GraphNode:
         self.level = level
         self.fvalue = fvalue 
     
+    def find_underScore(self,matrix,x):
+        for i in range(len(self.data)):
+            for j in range(len(self.data)):
+                if matrix[i][j]==x:
+                    return i,j
+    
+    def shift_graphElements(self,matrix,x1,y1,x2,y2):
+        if x2 >=0 and x2 < len(self.data) and y2 >= 0 and y2 <len(self.data):
+            temp_matrix = []
+            temp_matrix = self.matrix_copy(matrix)
+            temp =  temp_matrix[x2][y2]
+            temp_matrix[x2][y2] = temp_matrix[x1][y1]
+            temp_matrix[x1][y1] = temp
+            return temp_matrix
+
+    
+    def expand_matrix(self):
+        x,y = self.find_underScore(self.data,'_')
+        shuffle_list = [[x,y-1],[x,y+1],[x-1,y],[x+1,y]]
+        child_matrix = []
+        for i in shuffle_list:
+            child = self.shift_graphElements(self.data,x,y,i[0],i[1])
+            if child is not None:
+                child_node = GraphNode(child,self.level+1,0)
+                child_matrix.append(child_node)
+        return child_matrix
+
+    def matrix_copy(self,data):
+        mat = []
+        for i in data:
+            temp = []
+            for j in i:
+                temp.append(j)
+            mat.append(temp)
+        return temp
+    
     
 
 class Astar:
@@ -60,8 +96,15 @@ class Astar:
                     print(j)
                 print("")
         # limiting condition for recursion so that doesn't run infinitely
-        if(self.h_score(current_matrix.data,goal)==0):
-            break
+            if(self.h_score(current_matrix.data,goalMatrix)==0):
+                break
+            for i in current_matrix.expand_matrix():
+                i.fvalue = self.f_score(i,goalMatrix)
+                self.open.append(i)
+            self.closed.append(current_matrix)
+            del self.open[0]
+
+            self.open.sort(key = lambda x:x.fvalue,reverse=False)
         
 
 
