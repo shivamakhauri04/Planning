@@ -17,8 +17,8 @@ class GraphNode:
         self.fvalue = fvalue 
     
     def find_underScore(self,matrix,x):
-        for i in range(len(self.data)):
-            for j in range(len(self.data)):
+        for i in range(0,len(self.data)):
+            for j in range(0,len(self.data)):
                 if matrix[i][j]==x:
                     return i,j
     
@@ -30,6 +30,8 @@ class GraphNode:
             temp_matrix[x2][y2] = temp_matrix[x1][y1]
             temp_matrix[x1][y1] = temp
             return temp_matrix
+        else:
+            None
 
     
     def expand_matrix(self):
@@ -44,12 +46,12 @@ class GraphNode:
         return child_matrix
 
     def matrix_copy(self,data):
-        mat = []
+        temp = []
         for i in data:
-            temp = []
+            t = []
             for j in i:
-                temp.append(j)
-            mat.append(temp)
+                t.append(j)
+            temp.append(t)
         return temp
     
     
@@ -62,7 +64,7 @@ class Astar:
 
     def inputMatrix(self):
         data = []
-        for i  in range(self.n):
+        for i in range(0,self.n):
             row = input().split(" ")
             data.append(row)
         return data
@@ -72,8 +74,8 @@ class Astar:
     
     def h_score(self,start,goal):
         temp = 0
-        for i in range(self.n):
-            for j in range(self.n):
+        for i in range(0,self.n):
+            for j in range(0,self.n):
                 if start[i][j] != goal[i][j] and start[i][j] != "_":
                     temp +=1
         return temp
@@ -86,14 +88,16 @@ class Astar:
         initialMatrix = GraphNode(initialMatrix,0,0)
         initialMatrix.fvalue = self.f_score(initialMatrix,goalMatrix)
         self.open.append(initialMatrix)
+        print ('\n \n')
         # Creating recursion
         while True:
             current_matrix = self.open[0]
             print("")
             print("######################")
+            print("\n")
             for i in current_matrix.data:
                 for j in i:
-                    print(j)
+                    print(j,end = " ")
                 print("")
         # limiting condition for recursion so that doesn't run infinitely
             if(self.h_score(current_matrix.data,goalMatrix)==0):
