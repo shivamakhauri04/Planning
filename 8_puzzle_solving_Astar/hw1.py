@@ -35,7 +35,7 @@ class GraphNode:
 
     
     def expand_matrix(self):
-        x,y = self.find_underScore(self.data,'_')
+        x,y = self.find_underScore(self.data,0)
         shuffle_list = [[x,y-1],[x,y+1],[x-1,y],[x+1,y]]
         child_matrix = []
         for i in shuffle_list:
@@ -63,11 +63,32 @@ class Astar:
         self.closed = []
 
     def inputMatrix(self):
-        data = []
+        matrix = []
+        for i in range(3):
+            data = []
+            for j in range(3):
+                data.append(int(input()))
+            matrix.append(data)
+        return matrix
+        
+
+    def invCount(self,initialMatrix):
+        invCount = 0
+        #print(initialMatrix)
+
         for i in range(0,self.n):
-            row = input().split(" ")
-            data.append(row)
-        return data
+            for j in range(i+1,self.n):
+                #print (initialMatrix[i][j])
+                if initialMatrix[j]>initialMatrix[i]:
+                    invCount = invCount + 1
+        return invCount
+
+    def checkSolvability(self,initialMatrix):
+        temp = initialMatrix
+        invCount = self.invCount(temp)
+        #print (invCount)
+        return (invCount%2)
+
 
     def f_score(self,start,goal):
         return self.h_score(start.data,goal)+start.level
@@ -76,22 +97,30 @@ class Astar:
         temp = 0
         for i in range(0,self.n):
             for j in range(0,self.n):
-                if start[i][j] != goal[i][j] and start[i][j] != "_":
+                if start[i][j] != goal[i][j] and start[i][j] != 0:
                     temp +=1
         return temp
 
-    def main(self):
-        print("input the start matrix(3*3)- Enter the data rowwise with spaces in between elements")
-        initialMatrix = self.inputMatrix()
-        print("input the goal matrix(3*3)- Enter the data rowwise with spaces in between elements")
-        goalMatrix = self.inputMatrix()
+
+
+
+def main():
+    astar = Astar(3)
+    print("input the start matrix(3*3)- Enter the data element by element")
+    initialMatrix = astar.inputMatrix()
+    print (initialMatrix)
+    if (astar.checkSolvability(initialMatrix)):
+        print ("Not solvable")
+    else:
+        print("input the goal matrix(3*3)- Enter the data element by element")
+        goalMatrix = astar.inputMatrix()
         initialMatrix = GraphNode(initialMatrix,0,0)
-        initialMatrix.fvalue = self.f_score(initialMatrix,goalMatrix)
-        self.open.append(initialMatrix)
+        initialMatrix.fvalue = astar.f_score(initialMatrix,goalMatrix)
+        astar.open.append(initialMatrix)
         print ('\n \n')
         # Creating recursion
         while True:
-            current_matrix = self.open[0]
+            current_matrix = astar.open[0]
             print("")
             print("######################")
             print("\n")
@@ -99,21 +128,21 @@ class Astar:
                 for j in i:
                     print(j,end = " ")
                 print("")
-        # limiting condition for recursion so that doesn't run infinitely
-            if(self.h_score(current_matrix.data,goalMatrix)==0):
+            # limiting condition for recursion so that doesn't run infinitely
+            if(astar.h_score(current_matrix.data,goalMatrix)==0):
                 break
             for i in current_matrix.expand_matrix():
-                i.fvalue = self.f_score(i,goalMatrix)
-                self.open.append(i)
-            self.closed.append(current_matrix)
-            del self.open[0]
+                i.fvalue = astar.f_score(i,goalMatrix)
+                astar.open.append(i)
+            astar.closed.append(current_matrix)
+            del astar.open[0]
 
-            self.open.sort(key = lambda x:x.fvalue,reverse=False)
+            astar.open.sort(key = lambda x:x.fvalue,reverse=False)
         
 
 
 
 
 
-puzzle = Astar(3)
-puzzle.main()
+#puzzle = Astar(3)
+main()
