@@ -15,7 +15,7 @@ The 8-puzzle problem is a puzzle invented and popularized by Noyes Palmer Chapma
 
 Example to enter a puzzle:
 
-
+![alt text](sample.png)
 
 # Dependencies 
 Numpy
