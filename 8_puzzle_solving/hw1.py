@@ -1,4 +1,6 @@
 import numpy as np
+import re
+import os
 
 # class to store graph data
 class GraphNode:
@@ -41,30 +43,20 @@ class GraphNode:
         # shuffle the puzzle to create new children
         shuffle_list = [[x,y-1],[x,y+1],[x-1,y],[x+1,y]]
         child_matrix = []
-        f2 = open("NodesInfo.txt",'a')
-        f = open('Nodes.txt','a')
+       
+        
         for i in shuffle_list:
             # for each children add the values in the text file
             child = self.shift_graphElements(self.data,x,y,i[0],i[1])
             
-            f2.write(str(child_tag))
-            f2.write(' ')
-            f2.write(str(parent_tag))
-            f2.write('\n')
+            
             if child is not None:
                 # for each children store its data 
                 child_node = GraphNode(child,self.level+1,0)
                 child_matrix.append(child_node)
-                for m in child_node.data:
-                    for n in m:
-                        f.write(str(n))
-                        f.write(' ')
-                f.write('\n')
                 child_tag = child_tag+1  
                 
-                
-        f2.close()       
-        f.close()
+                    
         return child_matrix
 
     def matrix_copy(self,data):
@@ -128,6 +120,16 @@ class dfs:
                     temp +=1
         return temp
 
+def remove_bracks():
+    file = open('temp.txt','r')
+    file1 = open('Nodes.txt','w')
+    lines = file.read()
+    s = re.sub(r'[^\w\s]','',lines)
+    file1.write(s)
+    file.close()
+    os.remove('temp.txt')
+
+
 
 
 
@@ -153,8 +155,13 @@ def main():
         print ('\n \n')
         # Creating recursion
         f1 = open("nodePath.txt","w")
+        f = open('temp.txt','w')
+        f2 = open("NodesInfo.txt",'w')
         parent_tag = 0
-        child_tag = 0
+        child_tag = 1
+        f2.write(str(child_tag))
+        f2.write(' ')
+        f2.write(str(parent_tag)) 
         while True:
             current_matrix = DFS.open[0]
             print("")
@@ -162,6 +169,7 @@ def main():
             print("\n")
             # store the graph cnfiguration for the best path
             temp = np.asarray(current_matrix.data)
+            # slice nodes to store them columnwise 
             temp1 = [i for i in temp[:,0]]
             str1 = ''
             for i in temp1:
@@ -176,27 +184,43 @@ def main():
             str3 = ''
             for i in temp3:
                 str3 = str3 + str(i) + ' '
-
+            # write nodes in file
             f1.write(str(str1))
             f1.write(' ')
             f1.write(str(str2))
             f1.write(' ')
             f1.write(str(str3))
-
             f1.write('\n')  
+            parent_tag = parent_tag+1
             # limiting condition for recursion so that doesn't run infinitely
             if(DFS.visited_status(current_matrix.data,goalMatrix)==0):
                 break
             for i in current_matrix.expand_matrix(parent_tag,child_tag):
                 # traverse the neighbours of the visited noeds to check if visited
                 i.visited = DFS.check_visited(i,goalMatrix)
+                
+                child_tag = child_tag + 1
+                print (i.data)
+                f.write(str(i.data))
+                f.write('\n')
+                f2.write('\n')
+                f2.write(str(child_tag))
+                f2.write(' ')
+                f2.write(str(parent_tag))
+
+                
+                    
+
+
                 DFS.open.append(i)
-            # if noed travered, store it in closed list
-            parent_tag= parent_tag+1
+            
+            # if node travered, store it in closed list
             DFS.closed.append(current_matrix)
             del DFS.open[0]
             DFS.open.sort(key = lambda x:x.visited,reverse=False)
         f1.close()
+        f.close()
 
 
 main()
+remove_bracks()
