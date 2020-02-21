@@ -129,10 +129,6 @@ def remove_bracks():
     file.close()
     os.remove('temp.txt')
 
-
-
-
-
 def main():
     # constructor call
     DFS = dfs(3)
@@ -167,6 +163,10 @@ def main():
             print("")
             print("######################")
             print("\n")
+            for i in current_matrix.data:
+                for j in i:
+                    print(j,end = " ")
+                print("")
             # store the graph cnfiguration for the best path
             temp = np.asarray(current_matrix.data)
             # slice nodes to store them columnwise 
@@ -200,7 +200,7 @@ def main():
                 i.visited = DFS.check_visited(i,goalMatrix)
                 
                 child_tag = child_tag + 1
-                print (i.data)
+                #print (i.data)
                 f.write(str(i.data))
                 f.write('\n')
                 f2.write('\n')
@@ -209,9 +209,6 @@ def main():
                 f2.write(str(parent_tag))
 
                 
-                    
-
-
                 DFS.open.append(i)
             
             # if node travered, store it in closed list
@@ -221,6 +218,6 @@ def main():
         f1.close()
         f.close()
 
-
-main()
-remove_bracks()
+if __name__ == "__main__":
+    main()
+    remove_bracks()
