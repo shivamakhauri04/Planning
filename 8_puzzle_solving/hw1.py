@@ -120,14 +120,34 @@ class dfs:
                     temp +=1
         return temp
 
+    def transpose(self,arr):
+        # transpose the matrix
+        temp = [[arr[j][i] for j in range(len(arr))] for i in range(len(arr[0]))] 
+        return temp
+    
+
 def remove_bracks():
+    # to store the matrix without brackets
     file = open('temp.txt','r')
     file1 = open('Nodes.txt','w')
     lines = file.read()
     s = re.sub(r'[^\w\s]','',lines)
     file1.write(s)
     file.close()
+    file1.close()
     os.remove('temp.txt')
+
+def remove_bracks2():
+    # to store the matrix without brackets
+    file = open('temp1.txt','r')
+    file1 = open('nodePath.txt','w')
+    lines = file.read()
+    s = re.sub(r'[^\w\s]','',lines)
+    file1.write(s)
+    file.close()
+    file1.close()
+    os.remove('temp1.txt')
+    
 
 def main():
     # constructor call
@@ -150,7 +170,7 @@ def main():
         DFS.open.append(initialMatrix)
         print ('\n \n')
         # Creating recursion
-        f1 = open("nodePath.txt","w")
+        f1 = open("temp1.txt","w")
         f = open('temp.txt','w')
         f2 = open("NodesInfo.txt",'w')
         parent_tag = 0
@@ -163,34 +183,18 @@ def main():
             print("")
             print("######################")
             print("\n")
+            
             for i in current_matrix.data:
                 for j in i:
                     print(j,end = " ")
                 print("")
+            
             # store the graph cnfiguration for the best path
             temp = np.asarray(current_matrix.data)
-            # slice nodes to store them columnwise 
-            temp1 = [i for i in temp[:,0]]
-            str1 = ''
-            for i in temp1:
-                str1 = str1 + str(i) + ' '
-
-            temp2 = [i for i in temp[:,1]]
-            str2 = ''
-            for i in temp2:
-                str2 = str2 + str(i) + ' '
-
-            temp3 = [i for i in temp[:,2]]
-            str3 = ''
-            for i in temp3:
-                str3 = str3 + str(i) + ' '
-            # write nodes in file
-            f1.write(str(str1))
-            f1.write(' ')
-            f1.write(str(str2))
-            f1.write(' ')
-            f1.write(str(str3))
-            f1.write('\n')  
+            arr = DFS.transpose(temp)
+            #remove_bracks()
+            f1.write(str(arr))
+            f1.write('\n')
             parent_tag = parent_tag+1
             # limiting condition for recursion so that doesn't run infinitely
             if(DFS.visited_status(current_matrix.data,goalMatrix)==0):
@@ -200,15 +204,14 @@ def main():
                 i.visited = DFS.check_visited(i,goalMatrix)
                 
                 child_tag = child_tag + 1
-                #print (i.data)
-                f.write(str(i.data))
+                # transpose the matrix
+                transposed_data = DFS.transpose(i.data)
+                f.write(str(transposed_data))
                 f.write('\n')
                 f2.write('\n')
                 f2.write(str(child_tag))
                 f2.write(' ')
-                f2.write(str(parent_tag))
-
-                
+                f2.write(str(parent_tag))     
                 DFS.open.append(i)
             
             # if node travered, store it in closed list
@@ -221,3 +224,4 @@ def main():
 if __name__ == "__main__":
     main()
     remove_bracks()
+    remove_bracks2()

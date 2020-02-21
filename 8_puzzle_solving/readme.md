@@ -6,3 +6,20 @@
 4. Enter the elements one by one (from left to right and top to bottom). So the user will enter 9 single digit elements with one elemnt in each line.
 
 
+Example to enter a puzzle:
+1 2 3
+0 4 6
+7 5 8
+
+Syntax:
+When prompted: input the start matrix(3*3)- Enter the data element by element
+1
+2
+3
+0
+4
+6
+7
+5
+8
+
