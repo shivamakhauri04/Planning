@@ -1,3 +1,5 @@
+import numpy as np
+
 # class to store graph data
 class GraphNode:
     # constructor
@@ -31,37 +33,26 @@ class GraphNode:
             None
 
     
-    def expand_matrix(self):
-        # to keep of track of the child
-        child_tag = 0
-        # to keep a track of the parent
-        cnt = 0
+    def expand_matrix(self,parent_tag,child_tag):
+        
         # call the function to find position of zero
         x,y = self.find_zero(self.data,0)
-        parent_list = []
-        parent_tag = 3*x + y
-        parent_list.append(parent_tag)
-        length = len(parent_list)
-        # to track if a new parent is created
-        parent_tag = set(parent_list)
-        if len(parent_tag) != length:
-            cnt = cnt +1
+        
         # shuffle the puzzle to create new children
         shuffle_list = [[x,y-1],[x,y+1],[x-1,y],[x+1,y]]
         child_matrix = []
-        f2 = open("NodesInfo.txt",'w')
-        f = open('Nodes.txt','w')
+        f2 = open("NodesInfo.txt",'a')
+        f = open('Nodes.txt','a')
         for i in shuffle_list:
             # for each children add the values in the text file
             child = self.shift_graphElements(self.data,x,y,i[0],i[1])
-            child_tag = child_tag+1
+            
             f2.write(str(child_tag))
             f2.write(' ')
-            f2.write(str(cnt))
+            f2.write(str(parent_tag))
             f2.write('\n')
             if child is not None:
                 # for each children store its data 
-                buffer = []
                 child_node = GraphNode(child,self.level+1,0)
                 child_matrix.append(child_node)
                 for m in child_node.data:
@@ -69,7 +60,7 @@ class GraphNode:
                         f.write(str(n))
                         f.write(' ')
                 f.write('\n')
-                print (buffer)       
+                child_tag = child_tag+1  
                 
                 
         f2.close()       
@@ -157,33 +148,51 @@ def main():
         initialMatrix = GraphNode(initialMatrix,0,0)
         # track the nodes which have already been traversed
         initialMatrix.visited = DFS.check_visited(initialMatrix,goalMatrix)
-        # store thepossible paths
+        # store the possible paths
         DFS.open.append(initialMatrix)
         print ('\n \n')
         # Creating recursion
         f1 = open("nodePath.txt","w")
+        parent_tag = 0
+        child_tag = 0
         while True:
             current_matrix = DFS.open[0]
             print("")
             print("######################")
             print("\n")
             # store the graph cnfiguration for the best path
-            for i in current_matrix.data:
-                for j in i:
-                    print(j,end = " ")
-                    f1.write(str(j))
-                    f1.write(' ')
-   
-                print("")
+            temp = np.asarray(current_matrix.data)
+            temp1 = [i for i in temp[:,0]]
+            str1 = ''
+            for i in temp1:
+                str1 = str1 + str(i) + ' '
+
+            temp2 = [i for i in temp[:,1]]
+            str2 = ''
+            for i in temp2:
+                str2 = str2 + str(i) + ' '
+
+            temp3 = [i for i in temp[:,2]]
+            str3 = ''
+            for i in temp3:
+                str3 = str3 + str(i) + ' '
+
+            f1.write(str(str1))
+            f1.write(' ')
+            f1.write(str(str2))
+            f1.write(' ')
+            f1.write(str(str3))
+
             f1.write('\n')  
             # limiting condition for recursion so that doesn't run infinitely
             if(DFS.visited_status(current_matrix.data,goalMatrix)==0):
                 break
-            for i in current_matrix.expand_matrix():
+            for i in current_matrix.expand_matrix(parent_tag,child_tag):
                 # traverse the neighbours of the visited noeds to check if visited
                 i.visited = DFS.check_visited(i,goalMatrix)
                 DFS.open.append(i)
             # if noed travered, store it in closed list
+            parent_tag= parent_tag+1
             DFS.closed.append(current_matrix)
             del DFS.open[0]
             DFS.open.sort(key = lambda x:x.visited,reverse=False)
