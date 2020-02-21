@@ -92,13 +92,15 @@ class dfs:
         
 
     def invCount(self,initialMatrix):
-        # function to count the number of inversions 
-        invCount = 0
-        for i in range(0,self.n):
-            for j in range(i+1,self.n):
-                if initialMatrix[j]>initialMatrix[i]:
-                    invCount = invCount + 1
-        return invCount
+        count = 0
+        initialMatrix = np.array(initialMatrix)
+        temp = initialMatrix.flatten()
+        for i in range(len(temp)):
+            for j in range(i, len(temp)):
+                if temp[i] > temp[j]:
+                    if temp[j] != 0:
+                        count += 1
+        return count
 
     def checkSolvability(self,initialMatrix):
         # function to check if the number of inversions is odd
@@ -223,5 +225,8 @@ def main():
 
 if __name__ == "__main__":
     main()
-    remove_bracks()
-    remove_bracks2()
+    try :
+        remove_bracks()
+        remove_bracks2()
+    except:
+        print ("not solvable")
