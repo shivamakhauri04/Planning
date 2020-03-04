@@ -21,25 +21,51 @@ class Djik():
         self.index=2
 
     def obstacle(self,x,y,resolution):
-        
+        index = 0
+        # circle
+        if ((x - 225) ** 2) + ((y - 150) ** 2) - ((25 + distance) ** 2) <= 0:
+            index = 1
+        #  ellipse200
+        if ((x - 150) / (40 + distance)) ** 2 + ((y - 100) / (20 + distance)) ** 2 - 1 <= 0:
+            index = 1
+        # quad
+        # if (15*x+25*y - 7375/ <= 0) and (15*x - 25*y + 625/ >= 0) and (15*x +25*y -8125<= 0) and (15*x -25*y + 1375 >= 0):
+        #    index=1
+        # rect
+
+        # poly
         return index
 
 
     def navigate(self,previousNode,resolution):
-        
+        c = self.obstacle(previousNode[0], previousNode[1])
+        if c == 1 or previousNode[0] not in range(0, 301) or (previousNode[1] not in range(0, 301)):
+            print("Start point inside obstacle space or not in workspace space or not a good entry ")
+            exit()
+        else:
             pass
 
     def endNavigation(self,endgoal,resolution):
-        
+        c = self.obstacle(endgoal[0], endgoal[1])
+        if c == 1 or endgoal[0] not in range(0, 301) or endgoal[1] not in range(0, 301):
+            print("Goal point inside obstacle space or not in workspace space or not a good entry ")
+            exit()
+        else:
             pass
 
 
-    def resolutionCriteria(self,resolution):
-            pass
+
 
 
     def child(self,i,in_weight,resolution,visited,nodes,weight_list,root):
-        
+        self.left(i, in_weight, visited, nodes, weight_list, root)
+        self.right(i, in_weight, visited, nodes, weight_list, root)
+        self.up(i, in_weight, visited, nodes, weight_list, root)
+        self.down(i, in_weight, visited, nodes, weight_list, root)
+        self.up_left(i, in_weight, visited, nodes, weight_list, root)
+        self.up_right(i, in_weight, visited, nodes, weight_list, root)
+        self.down_left(i, in_weight, visited, nodes, weight_list, root)
+        self.down_right(i, in_weight, visited, nodes, weight_list, root)
 
     def left(self,previousNode,in_weight,resolution,visited,nodes,weight_list,root):
         
