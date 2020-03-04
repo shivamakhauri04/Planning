@@ -67,25 +67,71 @@ class Djik():
         self.down_left(i, in_weight, visited, nodes, weight_list, root)
         self.down_right(i, in_weight, visited, nodes, weight_list, root)
 
-    def left(self,previousNode,in_weight,resolution,visited,nodes,weight_list,root):
-        
+    def left(self, previousNode, in_weight, visited, nodes, weight_list, root):
+        currentNode = previousNode[:]
+        x = currentNode[0] - 1
+        y = currentNode[1]
+        weight = 1 + in_weight
+        currentNode, weight = self.possiblePath(currentNode, x, y, weight, previousNode, visited, nodes, weight_list,
+                                                root)
         return currentNode
 
-    def right(self,previousNode,in_weight,resolution,visited,nodes,weight_list,root):
-        
+    def right(self, previousNode, in_weight, visited, nodes, weight_list, root):
+        currentNode = previousNode[:]
+        x = currentNode[0] + 1
+        y = currentNode[1]
+        weight = 1 + in_weight
+        currentNode, weight = self.possiblePath(currentNode, x, y, weight, previousNode, visited, nodes, weight_list,
+                                                root)
         return currentNode
 
-    def up(self,previousNode,in_weight,resolution,visited,nodes,weight_list,root):
-        
-    def down(self,previousNode,in_weight,resolution,visited,nodes,weight_list,root):
-        
-    def up_left(self,previousNode,in_weight,resolution,visited,nodes,weight_list,root):
-        
-    def up_right(self,previousNode,in_weight,resolution,visited,nodes,weight_list,root):
-        
-    def down_left(self,previousNode,in_weight,resolution,visited,nodes,weight_list,root):
-        
-    def down_right(self,previousNode,in_weight,resolution,visited,nodes,weight_list,root):
+    def up(self, previousNode, in_weight, visited, nodes, weight_list, root):
+        currentNode = previousNode[:]
+        x = currentNode[0]
+        y = currentNode[1] + 1
+        weight = 1 + in_weight
+        currentNode, weight = self.possiblePath(currentNode, x, y, weight, previousNode, visited, nodes, weight_list,
+                                                root)
+
+    def down(self, previousNode, in_weight, visited, nodes, weight_list, root):
+        currentNode = previousNode[:]
+        x = currentNode[0]
+        y = currentNode[1] - 1
+        weight = 1 + in_weight
+        currentNode, weight = self.possiblePath(currentNode, x, y, weight, previousNode, visited, nodes, weight_list,
+                                                root)
+
+    def up_left(self, previousNode, in_weight, visited, nodes, weight_list, root):
+        currentNode = previousNode[:]
+        x = currentNode[0] - 1
+        y = currentNode[1] + 1
+        weight = math.sqrt(2) + in_weight
+        currentNode, weight = self.possiblePath(currentNode, x, y, weight, previousNode, visited, nodes, weight_list,
+                                                root)
+
+    def up_right(self, previousNode, in_weight, visited, nodes, weight_list, root):
+        currentNode = previousNode[:]
+        x = currentNode[0] + 1
+        y = currentNode[1] + 1
+        weight = math.sqrt(2) + in_weight
+        currentNode, weight = self.possiblePath(currentNode, x, y, weight, previousNode, visited, nodes, weight_list,
+                                                root)
+
+    def down_left(self, previousNode, in_weight, visited, nodes, weight_list, root):
+        currentNode = previousNode[:]
+        x = currentNode[0] - 1
+        y = currentNode[1] - 1
+        weight = math.sqrt(2) + in_weight
+        currentNode, weight = self.possiblePath(currentNode, x, y, weight, previousNode, visited, nodes, weight_list,
+                                                root)
+
+    def down_right(self, previousNode, in_weight, visited, nodes, weight_list, root):
+        currentNode = previousNode[:]
+        x = currentNode[0] + 1
+        y = currentNode[1] - 1
+        weight = math.sqrt(2) + in_weight
+        currentNode, weight = self.possiblePath(currentNode, x, y, weight, previousNode, visited, nodes, weight_list,
+                                                root)
         
     def possiblePath(self,currentNode,x,y,weight,previousNode,resolution,visited,nodes,weight_list,root):
         
