@@ -17,23 +17,33 @@ class Djik():
         self.green = [0, 255, 0]
         self.index = 2
 
-    def obstacle(self, x, y, resolution):
-
+    def obstacle(self,x,y,resolution):
+        index = 0
+        if ((x-math.ceil(160/resolution))**2+math.ceil(y-(50/resolution))**2-math.ceil(40/resolution)**2)<=0:
+            index=1
+        if (x-math.floor(90/resolution) >= 0) and (x - math.floor(110/resolution) <= 0) and (y - math.floor(40/resolution) >= 0) and (y - math.floor(60/resolution) <= 0):
+            index=1
         return index
-
-
-    def navigate(self, previousNode, resolution):
-
+    def navigate(self,previousNode,resolution):
+        c=self.obstacle(previousNode[0],previousNode[1],resolution)
+        if c ==1 or previousNode[0]  not in range(0,201) or (previousNode[1] not in range(0,101)):
+            print("Start point inside obstacle space/not in workspace space.Try again")
+            exit()
+        else:
             pass
 
-
-    def endNavigation(self, endgoal, resolution):
-
+    def endNavigation(self,endgoal,resolution):
+        c=self.obstacle(endgoal[0],endgoal[1],resolution)
+        if c ==1 or endgoal[0] not in range(0,201) or endgoal[1] not in range(0,101):
+            print("Goal point inside obstacle space/not in workspace space.Try again")
+            exit()
+        else:
             pass
-
-
-    def resolutionCriteria(self, resolution):
-
+    def resolutionCriteria(self,resolution):
+        if (200%resolution)!=0  or(100%resolution)!=0:
+            print("Enter an achivable resolution")
+            exit()
+        else:
             pass
 
 
