@@ -4,6 +4,7 @@ import pygame
 import numpy as np
 from sys import exit
 import math
+import time
 
 class Djik():
     def __init__(self,previousNode,endgoal):
@@ -289,8 +290,12 @@ def main():
     previousNode = [float(startPointX),float(startPointY)]
     endgoal=[float(endPointX),float(endPointY)]
     
+    start = time.time()
     shortestPath = Djik(previousNode,endgoal)
     shortestPath.algo(previousNode,endgoal,startPointX,startPointY)
+    end = time.time()
+    print(end - start)
+
     
 
 main()
