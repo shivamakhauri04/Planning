@@ -5,11 +5,11 @@ import numpy as np
 from sys import exit
 import math
 
-radius  = float(input("Please input radius"))
-clearance  =  float(input("Please input clearance"))
-distance  = radius+clearance
 class Djik():
-    def __init__(self,previousNode,endgoal):
+    def __init__(self,previousNode,endgoal,radius,clearance):
+        self.radius  = radius
+        self.clearance  =  clearance
+        self.distance  = radius+clearance 
         # begin the movement 
         self.navigate(previousNode)
         # last movement taken to reach the goal
@@ -25,13 +25,34 @@ class Djik():
         # Scaling factor for the pygame env
         self.index=2
 
-    # function to draw the obstacles in the map
+    # function to fix obstacle in the map
     def obstacle(self,x,y):
+        index = 0
+        # circle
+        if ((x-225)**2)+((y-150)**2)-((25+self.distance)**2)<=0:
+            index=1
+        #  ellipse200
+        if ((x-150)/(40+self.distance))**2 + ((y - 100)/(20+self.distance))**2 - 1 <=0:
+            index=1
+        # quad
+        if (y-(3/5)*(x+self.distance)+((475/5)-self.distance) <=0) and (y-(3/5)*(x-self.distance)+(625/5)+self.distance>=0) and  (y+(3/5)*(x+self.distance)-(725/5)+self.distance>=0)and  (y+(3/5)*(x-self.distance)-(875/5)-self.distance <=0):
+            index=1
+        # poly
+        if (y-13*(x+self.distance)+140-self.distance <=0) and (y-185-self.distance <=0) and (y-(x-self.distance)-100+self.distance >=0) and (5*y-7*x-400 >=0) :
+            index=1
+        if (y+(7/5)*(x-self.distance)-(1450/5)-self.distance<=0) and (y-(6/5)*(x-self.distance)-(150/5)+self.distance>=0) and (y+(6/5)*(x+self.distance)-(1050/5)+self.distance>=0) and (y-(7/5)*x-(400/5) <=0):
+            index = 1
+        # rect
+        if(y - 1.732*(x+self.distance) - 15.456864 -self.distance<=0) and (y + 0.577*(x-self.distance) - 96.382696 -self.distance<= 0) and (y- 1.732*(x-self.distance) + 134.54+self.distance >= 0) and (y + 0.577*(x+self.distance) - 84.815+self.distance >= 0):
+            index = 1
+        return index
+    # function to draw the obstacles in the map
+    def obstacle_plot(self,x,y):
         index = 0
         # circle
         if ((x-225)**2)+((y-150)**2)-(25**2)<=0:
             index=1
-        #  ellipse
+        #  ellipse200
         if ((x-150)/40)**2 + ((y - 100)/20)**2 - 1 <=0:
             index=1
         # quad
@@ -42,7 +63,7 @@ class Djik():
             index=1
         if (5*y+7*x-1450<=0) and (5*y-6*x-150>=0) and (5*y+6*x-1050>=0) and (5*y-7*x-400 <=0):
             index = 1
-        # polygon
+        # poly
         if(y - 1.732*x - 15.456864 <=0) and (y + 0.577*x - 96.382696 <= 0) and (y- 1.732*x + 134.54 >= 0) and (y + 0.577*x - 84.815 >= 0):
             index = 1
         return index
@@ -194,7 +215,7 @@ class Djik():
         observation=[]            
         for i in range(0,301):
             for j in range(0,201):
-                c=self.obstacle(i,j)
+                c=self.obstacle_plot(i,j)
                 if c==1:
                     observation.append([i,j])
                     
@@ -284,7 +305,8 @@ class Djik():
         
 
 def main():
-
+    radius = float(input("Please input radius"))
+    clearance = float(input("Please input clearance"))
     startPointX=input("input x coordinate for initial node")
     startPointY=input("input y coordinate for initial node")
     endPointX=input("input x coordinate for goal node")
@@ -292,7 +314,7 @@ def main():
     previousNode = [float(startPointX),float(startPointY)]
     endgoal=[float(endPointX),float(endPointY)]
     
-    shortestPath = Djik(previousNode,endgoal)
+    shortestPath = Djik(previousNode,endgoal,radius,clearance)
     shortestPath.algo(previousNode,endgoal,startPointX,startPointY)
     
 
