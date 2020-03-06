@@ -21,16 +21,22 @@ class Djik():
         # circle
         if ((x-225)**2)+((y-150)**2)-(25**2)<=0:
             index=1
-        #  ellipse200
+        #  ellipse
         if ((x-150)/40)**2 + ((y - 100)/20)**2 - 1 <=0:
             index=1
         # quad
-        #if (15*x+25*y - 7375/ <= 0) and (15*x - 25*y + 625/ >= 0) and (15*x +25*y -8125<= 0) and (15*x -25*y + 1375 >= 0):
-        #    index=1
+        if (5*y-3*x+475 <=0) and (5*y-3*x+625>=0) and  (5*y+3*x-725>=0)and  (5*y+3*x-875<=0):
+            index=1
         # rect
-        
+        if (y-13*x+140 <=0) and (y-185 <=0) and (y-x-100 >=0) and (5*y-7*x-400 >=0) :
+            index=1
+        if (5*y+7*x-1450<=0) and (5*y-6*x-150>=0) and (5*y+6*x-1050>=0) and (5*y-7*x-400 <=0):
+            index = 1
         # poly
+        if(y - 1.732*x - 15.456864 <=0) and (y + 0.577*x - 96.382696 <= 0) and (y- 1.732*x + 134.54 >= 0) and (y + 0.577*x - 84.815 >= 0):
+            index = 1
         return index
+        
     def navigate(self,previousNode):
         c=self.obstacle(previousNode[0],previousNode[1])
         if c ==1 or previousNode[0]  not in range(0,301) or (previousNode[1] not in range(0,301)):
