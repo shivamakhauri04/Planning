@@ -44,7 +44,6 @@ def astar(maze, start, end, distance, step):
     start_node.f = heuristic(start_node.position, end_node.position)
 
     # Initialize both open and closed list
-    # Initialize both open and closed list
     open_list = []
     closed_list = []
     # Add the start node
@@ -53,7 +52,6 @@ def astar(maze, start, end, distance, step):
     # Loop until you find the end
     while len(open_list) > 0:
 
-        # Get the current node   Based on the f scores
         # Get the current node   Based on the f scores
         current_node = open_list[0]
         open_list.sort(key=lambda x: x.f, reverse=True)
@@ -70,13 +68,57 @@ def astar(maze, start, end, distance, step):
                 path.append(current.position)
                 current = current.parent
             return path[::-1]  # Return reversed path
+        
+        closed_list.append([int(current_node.position[0]),int(current_node.position[1])])
+
+        
+        children = []
+        for new_position in get_moves(step):
+        #for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0)], (-1, -1), (-1, 1), (1, -1), (1, 1)]: # Adjacent squares
+
+            node_position = (current_node.position[0] + new_position[0], current_node.position[1] + new_position[1])
+
+            if node_position[0] > (len(maze) - 1) or node_position[0] < 0 or node_position[1] > (len(maze[len(maze)-1]) -1) or node_position[1] < 0:
+                continue
+
+            # Make sure walkable terrain
+            if obstacle(node_position[0],node_position[1],distance) != 0:
+            #if maze[node_position[0]][node_position[1]] != 0:
+                continue
+
+            new_node = Node(current_node, node_position)
+            
+            children.append(new_node)
+    
+        
+        for neighbour in children:
+            
+            neighbour.position = list(neighbour.position)
+            #neighbour.position[0] = int(neighbour.position[0])
+            #neighbour.position[1] = int(neighbour.position[1])
+            
+            if neighbour.position in closed_list:
+                continue
+            candidateG = current_node.g + 1 + 300*obstacle(neighbour.position[0],neighbour.position[1],distance)
+            
+            
+            #temp = open_list
+            
+            temp = [[int(items.position[0]),int(items.position[1])] for items in open_list]
+            print (neighbour.position,temp)  
+            if [int(neighbour.position[0]),int(neighbour.position[1])] not in temp:
+                open_list.append(neighbour)
+            elif candidateG >=neighbour.g:
+                continue
+
+            neighbour.parent = current_node
+            neighbour.g = candidateG
+            neighbour.h = heuristic(neighbour.position,end_node.position)
+            neighbour.f = neighbour.g + neighbour.h
 
 
 
-    while len(open_list) > 0:
 
-
-            return path[::-1]
 
 
 
