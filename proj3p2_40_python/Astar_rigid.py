@@ -110,9 +110,19 @@ def main():
     start = (xi, yi)
     goal = (xg, yg)
 
+    maze = [[0] * 201 for i in range(301)]
 
+    for i in range(301):
+        for j in range(201):
+            c = obstacle(i, j, distance)
+            if c == 1:
+                maze[i][j] = 1
 
+    if (obstacle(goal[0], goal[1], distance) == 1 or obstacle(start[0], start[1], distance)):
+        sys.exit("Either goal node or start node lies inside obstacle or outside the workspace")
+    path = astar(maze, start, goal, distance, step)
 
+    plotPygame(path, path, resolution=1)
 
 
 if __name__ == '__main__':
