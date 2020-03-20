@@ -26,6 +26,9 @@ def heuristic(start, goal):
 
 
 def get_moves(step):
+    moves = [(0, -1 * step), (0, 1 * step), (-1 * step, 0), (1 * step, 0),
+             (math.cos(math.pi / 6) * step, math.sin(math.pi / 6) * step), (math.cos(math.pi / 3) * step, math.sin(
+            math.pi / 3) * step)]
     return moves
 
 
@@ -75,7 +78,7 @@ def obstacle(x, y, distance):
         index = 1
     return index
 
-   
+
 
 
 
