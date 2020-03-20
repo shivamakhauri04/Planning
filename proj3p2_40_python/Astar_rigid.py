@@ -14,13 +14,14 @@ class Node():
         self.g = 0
         self.h = 0
         self.f = 0
-        self.g_temp = 0
+        
 
 def heuristic(start, goal):
     dx = abs(start[0] - goal[0])
     dy = abs(start[1] - goal[1])
     #return D * (dx + dy) + (D2 - 2 * D) * min(dx, dy)
     return dx**2+dy**2
+
 
 def get_moves(step,theta) :
     t1 = math.radians(theta)+math.pi/6
@@ -40,10 +41,10 @@ def astar(maze, start, end,distance,step):
     start_node.h = 0
     end_node = Node(None, end)
     end_node.g = end_node.h = end_node.f = 0
-    start_node.f = heuristic(start_node.position,end_node.position)
+    start_node.f = 0
+    #heuristic(start_node.position,end_node.position)
     
     
-    # Initialize both open and closed list
     # Initialize both open and closed list
     open_list = []
     closed_list = []
@@ -59,13 +60,11 @@ def astar(maze, start, end,distance,step):
     while len(open_list) > 0:
 
         # Get the current node   Based on the f scores
-        # Get the current node   Based on the f scores
         current_node = open_list[0]
         open_list.sort(key=lambda x: x.f,reverse=True)
         current_node = open_list.pop()
 
-
-        # Pop current off open list, add to closed list
+       
         
         # Found the goal
         #if (current_node.position == end_node.position):
@@ -75,8 +74,8 @@ def astar(maze, start, end,distance,step):
             while current is not None:
                 path.append(current.position)
                 current = current.parent
-            return path[::-1] # Return reversed path
-
+            return path[::-1],closed_list # Return reversed path
+         # Pop current off open list, add to closed list
         if current_node.position[2]> 360:
             current_node.position[2] = current_node.position[2]-360
         elif current_node.position[2]<0:
@@ -86,6 +85,7 @@ def astar(maze, start, end,distance,step):
         # Generate children
         children = []
         for new_position in get_moves(step,current_node.position[2]):
+            
             # Get node position
             node_position = [current_node.position[0] + new_position[0], current_node.position[1] + new_position[1], current_node.position[2] + new_position[2]]
 
@@ -99,42 +99,52 @@ def astar(maze, start, end,distance,step):
 
             # Create new node
             new_node = Node(current_node, node_position)
-            new_node.g_temp = new_node.g + heuristic(current_node.position,new_node.position) 
-            #print (new_node.g_temp)
+        
             # Append
             if new_node.position[2]> 360:
                     new_node.position[2] = new_node.position[2]-360
             elif new_node.position[2]<0:
                 new_node.position[2] = 360 - abs(new_node.position[2])
             children.append(new_node)
-    
+        
+        
         # Loop through children
         for neighbour in children:
             # check if child in closed set
             neighbour.position = list(neighbour.position)            
-            if [int(neighbour.position[0]),int(neighbour.position[1]), neighbour.position[2]] in closed_list and neighbour.g_temp>=neighbour.g :
+            if [int(neighbour.position[0]),int(neighbour.position[1]), neighbour.position[2]] in closed_list:
                 continue
             
             temp = [[int(items.position[0]),int(items.position[1])] for items in open_list]
             # check if child in openset
-            if [int(neighbour.position[0]),int(neighbour.position[1])] not in temp or neighbour.g_temp<neighbour.g:
+            # if exists
+            if [int(neighbour.position[0]),int(neighbour.position[1])] in temp:
+
+                if neighbour.position[2]> 360:
+                    neighbour.position[2] = neighbour.position[2]-360
+                elif neighbour.position[2]<0:
+                    neighbour.position[2] = 360 - abs(neighbour.position[2])
+                for i in range(len(open_list)):
+                    if open_list[i].position == neighbour.position:
+                        dis1 = heuristic(open_list[i].parent.position,start_node.position)
+                        dis2 = heuristic(neighbour.parent.position,start_node.position)
+                        if dis1< dis2:
+                            open_list[i] = neighbour
+
+            # if it doesnt exist in open list
+            else:
                 if neighbour.position[2]> 360:
                     neighbour.position[2] = neighbour.position[2]-360
                 elif neighbour.position[2]<0:
                     neighbour.position[2] = 360 - abs(neighbour.position[2])
                 
-                dis1 = heuristic(current_node.position,start_node.position)
-                dis2 = heuristic(neighbour.position,start_node.position)
-                if dis1< dis2:
-                    neighbour.parent = current_node
-                    neighbour.g = neighbour.g_temp
-                    neighbour.f = neighbour.g_temp + heuristic(neighbour.position,end_node.position)
-                    open_list.append(neighbour) 
-            
-            
-
-            
-            
+                neighbour.g = current_node.g + heuristic(neighbour.position,current_node.position)
+                neighbour.h = heuristic(neighbour.position,end_node.position)+1
+                neighbour.f = neighbour.g + neighbour.h
+                neighbour.parent = current_node
+                open_list.append(neighbour)
+                
+                  
 
 def obstacle(x,y,distance):
         index = 0
@@ -178,10 +188,10 @@ def obstacle_plot(x,y):
             index = 1
         return index
 
-def plotPygame(new_endgoal,visited,resolution=1):
-        index = 1
+def plotPygame(new_endgoal,visited):
+        index = 4
+        observation = []
         # read the obstacles and fill it in the pygame
-        observation=[]            
         for i in range(0,301):
             for j in range(0,201):
                 c=obstacle_plot(i,j)
@@ -189,19 +199,19 @@ def plotPygame(new_endgoal,visited,resolution=1):
                     observation.append([i,j])
                     
         state=np.array(observation)
-        observation=state*resolution
+        observation=state*index
         visited_buffer = np.array(visited)
-        visited=visited_buffer*resolution
-        visited_buffer1 = np.array(new_endgoal)
-        new_endgoal=visited_buffer1*resolution
+        visited=visited_buffer*index
+        path1 = np.array(new_endgoal)
+        new_endgoal=path1*index
         pygame.init()
         # size of the pygame display
-        size = [300*resolution, 200*resolution]
+        size = [300*index, 200*index]
         display = pygame.display.set_mode(size)
         pygame.display.set_caption("A star Robot") 
         clock = pygame.time.Clock()
         done = False
-
+        print ("exploring")
         while not done:
             # fill the background
             for event in pygame.event.get():   
@@ -210,22 +220,22 @@ def plotPygame(new_endgoal,visited,resolution=1):
             display.fill([0,0,0])
             # fill the obstacles
             for i in observation:
-                pygame.draw.rect(display, [255,255,255], [i[0],200*resolution-i[1],resolution,resolution])
+                pygame.draw.rect(display, [255,255,255], [i[0],200*index-i[1],index,index])
             pygame.display.flip()
             clock.tick(20)
-            '''
             # fill the traversed nodes will green
+            
             for i in visited:
                 pygame.time.wait(1)
-                pygame.draw.rect(display, self.green, [i[0],200*self.index-i[1],self.index,self.index])
+                pygame.draw.rect(display, [0,255,0], [i[0],200*index-i[1],index,index])
                 pygame.display.flip()
-            ''' 
+            
             # draw the shortest path in blue
             for j in new_endgoal:
                 pygame.time.wait(1)
-                pygame.draw.rect(display,[255,0,0], [j[0], 200*index-j[1], index,index])
+                pygame.draw.rect(display, [0,0,255], [j[0], 200*index-j[1], index,index])
                 pygame.display.flip()
-                   
+                    
             pygame.display.flip()
             pygame.time.wait(15000)
             done = True
@@ -264,38 +274,14 @@ def main():
                 if c==1:
                     maze[i][j] = 1
                     
-    #print (maze[52][52])
+
     if (obstacle(goal[0],goal[1],distance)==1 or obstacle(start[0],start[1],distance)):
         sys.exit("Either goal node or start node lies inside obstacle or outside the workspace")
-    path = astar(maze, start, goal,distance,step)
-    print (path)
-    plotPygame(path,path,resolution=1)
+    path,explored_nodes = astar(maze, start, goal,distance,step)
+    
+    plotPygame(path,explored_nodes)
 
 
 
 if __name__ == '__main__':
     main()
-
-
-'''
-            temp = [[int(items.position[0]),int(items.position[1])] for items in open_list]
-            # check if child in openset
-            if [int(neighbour.position[0]),int(neighbour.position[1])] not in temp or neighbour.g_temp<neighbour.g:
-                #print ('###########')
-                if neighbour.position[2]> 360:
-                    neighbour.position[2] = neighbour.position[2]-360
-                elif neighbour.position[2]<0:
-                    neighbour.position[2] = 360 - abs(neighbour.position[2])
-                    
-                open_list.append(neighbour)
-            else:
-                #print ('%%%%%%%%%%%%%%%%')
-                for i in range(len(open_list)):
-                    if open_list[i].position == neighbour.position:
-                        dis1 = heuristic(open_list[i].parent.position,start_node.position)
-                        dis2 = heuristic(neighbour.parent.position,start_node.position)
-                        if dis1< dis2:
-                            neighbour.parent = current_node
-                            neighbour.g = neighbour.g_temp
-                            neighbour.f = neighbour.g_temp + heuristic(neighbour.position,end_node.position)
-    '''
