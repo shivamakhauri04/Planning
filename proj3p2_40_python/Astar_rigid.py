@@ -3,18 +3,18 @@ import numpy as np
 from sys import exit
 import sys
 import math
+import time
 
 class Node():
     """A node class for A* Pathfinding"""
 
     def __init__(self, parent=None, position=None):
-        # define the properties of the node
         self.parent = parent
         self.position = position
+
         self.g = 0
         self.h = 0
         self.f = 0
-
 
 def heuristic(start, goal):
     # calculate distance between points
@@ -31,12 +31,12 @@ def get_moves(step,theta) :
     t3 = math.radians(theta)
     t4 = math.radians(theta) -math.pi/6
     t5 = math.radians(theta)- math.pi/3
-    moves = [(math.cos(t1)*step, math.sin(t1)*step, 30),(math.cos(t2)*step, math.sin(t3)*step, 60), (math.cos(t3)*step, math.sin(t3)*step, 0) , (math.cos(t4)*step, math.sin(t4)*step, -30), (math.cos(t5)*step, math.sin(t5)*step, -60)]
+    moves = [(math.cos(t1)*step, math.sin(t1)*step, 30),(math.cos(t2)*step, math.sin(t3)*step, 60), (math.cos(t3)*step, math.sin(t3)*step, 0) , (math.cos(t4)*step, math.sin(t4)*step, -30), (math.cos(t5)*step, math.sin(t5)*step, -60)] #(math.cos(math.pi/3)*step, math.sin(math.pi/3)*step), (math.cos(2*math.pi/3)*step, math.sin(2*math.pi/3)*step), ((math.cos(5*math.pi/6)*step, math.sin(5*math.pi/6)*step)),(math.cos(7*math.pi/6)*step, math.sin(7*math.pi/6)*step),(math.cos(8*math.pi/6)*step, math.sin(8*math.pi/6)*step),(math.cos(10*math.pi/6)*step, math.sin(10*math.pi/6)*step),(math.cos(11*math.pi/6)*step, math.sin(11*math.pi/6)*step)]: # Adjacent squares
     return moves
 
 def astar(maze, start, end,distance,step):
     """Returns a list of tuples as a path from the given start to the given end in the given maze"""
-
+    
     # Create start and end node
     start_node = Node(None, start)
     start_node.g = 0
@@ -45,21 +45,24 @@ def astar(maze, start, end,distance,step):
     end_node.g = end_node.h = end_node.f = 0
     start_node.f = 0
     
+    
     # Initialize both open and closed list
     open_list = []
     closed_list = []
-
+    
     # Make sure the robot does not revolve at its own place
     if start_node.position[2]> 360:
         start_node.position[2] = start_node.position[2]-360
     elif start_node.position[2]<0:
         start_node.position[2] = 360 - abs(start_node.position[2])
-    # append start node in the visited list
+    # Add the start node
     open_list.append(start_node)
 
 
     # Loop until you find the end
     while len(open_list) > 0:
+        print ("##### Exploring #####")
+
         # Get the current node   Based on the f scores
         open_list.sort(key=lambda x: x.f,reverse=True)
         # Pop current off open list, add to closed list
@@ -99,9 +102,8 @@ def astar(maze, start, end,distance,step):
 
             # Create new node
             new_node = Node(current_node, node_position)
-            new_node.g = current_node.g+1
+            new_node.g = current_node.g+step
             new_node.f = new_node.g + heuristic(end,new_node.position)
-
             # Append
             if new_node.position[2]> 360:
                     new_node.position[2] = new_node.position[2]-360
@@ -112,12 +114,12 @@ def astar(maze, start, end,distance,step):
         
         # Loop through children
         for neighbour in children:
-            # chek if child in closed list
+           
             if [int(neighbour.position[0]), int(neighbour.position[1]),
                 neighbour.position[2]] in closed_list:
                 continue
 
-                
+            
             temp = [[int(items.position[0]),int(items.position[1])] for items in open_list]
             # check if child in openset
             if [int(neighbour.position[0]),int(neighbour.position[1])] in temp:
@@ -230,15 +232,7 @@ def plotPygame(new_endgoal,visited, openList):
                 pygame.draw.rect(display, [255, 255, 255], [i.position[0]*index, 200 * index - i.position[1]*index, index, index])
             # pygame.display.flip()
             clock.tick(20)
-            # fill the traversed nodes will green
-            '''
-            for i in visited:
-                pygame.time.wait(1)
-                pygame.draw.rect(display, [0,255,0], [i[0],200*index-i[1],index,index])
-                pygame.display.flip()
-            '''
-            # draw the shortest path in blue
-            print (new_endgoal[:])
+            # draw the shortest path in red
             for j in new_endgoal:
                 pygame.time.wait(1)
                 pygame.draw.rect(display, [255,0,0], [j[0], 200*index-j[1], index*2,index*2])
@@ -278,7 +272,7 @@ def main():
 
     start = [xi, yi, theta]
     goal = (xg,yg)
-    # create the map
+
     maze = [[0]*201 for i in range(301)]
     
     for i in range(301):
@@ -286,11 +280,14 @@ def main():
                 c=obstacle(i,j,distance)
                 if c==1:
                     maze[i][j] = 1
-    # check for obstacles
+                    
+    
     if (obstacle(goal[0],goal[1],distance)==1 or obstacle(start[0],start[1],distance)):
         sys.exit("Either goal node or start node lies inside obstacle or outside the workspace")
-    # run astar
+    begin = time.time()
     path,explored_nodes, openList = astar(maze, start, goal,distance,step)
+    end = time.time()
+    print (end-begin)
     
     plotPygame(path,explored_nodes, openList)
 
