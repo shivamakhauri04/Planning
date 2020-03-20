@@ -118,15 +118,6 @@ def astar(maze, start, end, distance, step):
 
 
 
-
-
-
-
-
-
-
-
-
 def obstacle(x, y, distance):
     index = 0
     # circle
@@ -157,18 +148,84 @@ def obstacle(x, y, distance):
         index = 1
     return index
 
+def obstacle_plot(x,y):
+        index = 0
+        # circle
+        if ((x-225)**2)+((y-150)**2)-(25**2)<=0:
+            index=1
+        #  ellipse200
+        if ((x-150)/40)**2 + ((y - 100)/20)**2 - 1 <=0:
+            index=1
+        # quad
+        if (5*y-3*x+475 <=0) and (5*y-3*x+625>=0) and  (5*y+3*x-725>=0)and  (5*y+3*x-875<=0):
+            index=1
+        # rect
+        if (y-13*x+140 <=0) and (y-185 <=0) and (y-x-100 >=0) and (5*y-7*x-400 >=0) :
+            index=1
+        if (5*y+7*x-1450<=0) and (5*y-6*x-150>=0) and (5*y+6*x-1050>=0) and (5*y-7*x-400 <=0):
+            index = 1
+        # poly
+        if(y - 1.732*x - 15.456864 <=0) and (y + 0.577*x - 96.382696 <= 0) and (y- 1.732*x + 134.54 >= 0) and (y + 0.577*x - 84.815 >= 0):
+            index = 1
+        return index
 
 
 
 
 
+def plotPygame(new_endgoal,visited,resolution=1):
+        index = 1
+        # read the obstacles and fill it in the pygame
+        observation=[]            
+        for i in range(0,301):
+            for j in range(0,201):
+                c=obstacle_plot(i,j)
+                if c==1:
+                    observation.append([i,j])
+                    
+        state=np.array(observation)
+        observation=state*resolution
+        visited_buffer = np.array(visited)
+        visited=visited_buffer*resolution
+        visited_buffer1 = np.array(new_endgoal)
+        new_endgoal=visited_buffer1*resolution
+        pygame.init()
+        # size of the pygame display
+        size = [300*resolution, 200*resolution]
+        display = pygame.display.set_mode(size)
+        pygame.display.set_caption("A star Robot") 
+        clock = pygame.time.Clock()
+        done = False
 
-def plotPygame(new_endgoal, visited, resolution=1):
-
-
-
-
-    pygame.quit()
+        while not done:
+            # fill the background
+            for event in pygame.event.get():   
+                if event.type == pygame.QUIT:  
+                    done = True 
+            display.fill([0,0,0])
+            # fill the obstacles
+            for i in observation:
+                pygame.draw.rect(display, [255,255,255], [i[0],200*resolution-i[1],resolution,resolution])
+            pygame.display.flip()
+            clock.tick(20)
+            '''
+            # fill the traversed nodes will green
+            for i in visited:
+                pygame.time.wait(1)
+                pygame.draw.rect(display, self.green, [i[0],200*self.index-i[1],self.index,self.index])
+                pygame.display.flip()
+            ''' 
+            # draw the shortest path in blue
+            for j in new_endgoal:
+                pygame.time.wait(1)
+                pygame.draw.rect(display,[255,0,0], [j[0], 200*index-j[1], index,index])
+                pygame.display.flip()
+                   
+            pygame.display.flip()
+            pygame.time.wait(15000)
+            done = True
+            
+        pygame.quit()
 
 
 def main():
