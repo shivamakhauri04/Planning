@@ -33,6 +33,43 @@ def get_moves(step):
 
 
 def astar(maze, start, end, distance, step):
+    """Returns a list of tuples as a path from the given start to the given end in the given maze"""
+
+    # Create start and end node
+    start_node = Node(None, start)
+    start_node.g = 0
+    start_node.h = 0
+    end_node = Node(None, end)
+    end_node.g = end_node.h = end_node.f = 0
+    start_node.f = heuristic(start_node.position, end_node.position)
+
+    # Initialize both open and closed list
+    # Initialize both open and closed list
+    open_list = []
+    closed_list = []
+    # Add the start node
+    open_list.append(start_node)
+
+    # Loop until you find the end
+    while len(open_list) > 0:
+
+        # Get the current node   Based on the f scores
+        # Get the current node   Based on the f scores
+        current_node = open_list[0]
+        open_list.sort(key=lambda x: x.f, reverse=True)
+        current_node = open_list.pop()
+
+        # Pop current off open list, add to closed list
+
+        # Found the goal
+        if (math.sqrt((current_node.position[0] - end_node.position[0]) ** 2 + (
+                current_node.position[1] - end_node.position[1]) ** 2) < 1.5):
+            path = []
+            current = current_node
+            while current is not None:
+                path.append(current.position)
+                current = current.parent
+            return path[::-1]  # Return reversed path
 
 
 
