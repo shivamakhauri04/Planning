@@ -1,10 +1,8 @@
-# Author Shivam Akhauri, Raghav Aggarwal
 import pygame
 import numpy as np
 from sys import exit
 import sys
 import math
-
 
 class Node():
     """A node class for A* Pathfinding"""
@@ -16,23 +14,24 @@ class Node():
         self.g = 0
         self.h = 0
         self.f = 0
-
-
+        self.g_temp = 0
 
 def heuristic(start, goal):
     dx = abs(start[0] - goal[0])
     dy = abs(start[1] - goal[1])
-    return dx ** 2 + dy ** 2
+    #return D * (dx + dy) + (D2 - 2 * D) * min(dx, dy)
+    return dx**2+dy**2
 
-
-def get_moves(step):
-    moves = [(0, -1 * step), (0, 1 * step), (-1 * step, 0), (1 * step, 0),
-             (math.cos(math.pi / 6) * step, math.sin(math.pi / 6) * step), (math.cos(math.pi / 3) * step, math.sin(
-            math.pi / 3) * step)]
+def get_moves(step,theta) :
+    t1 = math.radians(theta)+math.pi/6
+    t2 = math.radians(theta)+math.pi/3
+    t3 = math.radians(theta)
+    t4 = math.radians(theta) -math.pi/6
+    t5 = math.radians(theta)- math.pi/3
+    moves = [(math.cos(t1)*step, math.sin(t1)*step, 30),(math.cos(t2)*step, math.sin(t3)*step, 60), (math.cos(t3)*step, math.sin(t3)*step, 0) , (math.cos(t4)*step, math.sin(t4)*step, -30), (math.cos(t5)*step, math.sin(t5)*step, -60)] #(math.cos(math.pi/3)*step, math.sin(math.pi/3)*step), (math.cos(2*math.pi/3)*step, math.sin(2*math.pi/3)*step), ((math.cos(5*math.pi/6)*step, math.sin(5*math.pi/6)*step)),(math.cos(7*math.pi/6)*step, math.sin(7*math.pi/6)*step),(math.cos(8*math.pi/6)*step, math.sin(8*math.pi/6)*step),(math.cos(10*math.pi/6)*step, math.sin(10*math.pi/6)*step),(math.cos(11*math.pi/6)*step, math.sin(11*math.pi/6)*step)]: # Adjacent squares
     return moves
 
-
-def astar(maze, start, end, distance, step):
+def astar(maze, start, end,distance,step):
     """Returns a list of tuples as a path from the given start to the given end in the given maze"""
 
     # Create start and end node
@@ -41,112 +40,122 @@ def astar(maze, start, end, distance, step):
     start_node.h = 0
     end_node = Node(None, end)
     end_node.g = end_node.h = end_node.f = 0
-    start_node.f = heuristic(start_node.position, end_node.position)
-
+    start_node.f = heuristic(start_node.position,end_node.position)
+    
+    
+    # Initialize both open and closed list
     # Initialize both open and closed list
     open_list = []
     closed_list = []
     # Add the start node
+    if start_node.position[2]> 360:
+        start_node.position[2] = start_node.position[2]-360
+    elif start_node.position[2]<0:
+        start_node.position[2] = 360 - abs(start_node.position[2])
     open_list.append(start_node)
+
 
     # Loop until you find the end
     while len(open_list) > 0:
 
         # Get the current node   Based on the f scores
+        # Get the current node   Based on the f scores
         current_node = open_list[0]
-        open_list.sort(key=lambda x: x.f, reverse=True)
+        open_list.sort(key=lambda x: x.f,reverse=True)
         current_node = open_list.pop()
 
-        # Pop current off open list, add to closed list
 
+        # Pop current off open list, add to closed list
+        
         # Found the goal
-        if (math.sqrt((current_node.position[0] - end_node.position[0]) ** 2 + (
-                current_node.position[1] - end_node.position[1]) ** 2) < 1.5):
+        #if (current_node.position == end_node.position):
+        if (math.sqrt((current_node.position[0] - end_node.position[0])**2 +  (current_node.position[1] - end_node.position[1])**2 )<1.5+distance):
             path = []
             current = current_node
             while current is not None:
                 path.append(current.position)
                 current = current.parent
-            return path[::-1]  # Return reversed path
-        
-        closed_list.append([int(current_node.position[0]),int(current_node.position[1])])
+            return path[::-1] # Return reversed path
 
-        
+        if current_node.position[2]> 360:
+            current_node.position[2] = current_node.position[2]-360
+        elif current_node.position[2]<0:
+            current_node.position[2] = 360 - abs(current_node.position[2])
+        closed_list.append([int(current_node.position[0]),int(current_node.position[1]),current_node.position[2]])
+
+        # Generate children
         children = []
-        for new_position in get_moves(step):
-        #for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0)], (-1, -1), (-1, 1), (1, -1), (1, 1)]: # Adjacent squares
+        for new_position in get_moves(step,current_node.position[2]):
+            # Get node position
+            node_position = [current_node.position[0] + new_position[0], current_node.position[1] + new_position[1], current_node.position[2] + new_position[2]]
 
-            node_position = (current_node.position[0] + new_position[0], current_node.position[1] + new_position[1])
-
+            # check within range
             if node_position[0] > (len(maze) - 1) or node_position[0] < 0 or node_position[1] > (len(maze[len(maze)-1]) -1) or node_position[1] < 0:
                 continue
 
             # Make sure walkable terrain
             if obstacle(node_position[0],node_position[1],distance) != 0:
-            #if maze[node_position[0]][node_position[1]] != 0:
                 continue
 
+            # Create new node
             new_node = Node(current_node, node_position)
-            
+            new_node.g_temp = new_node.g + heuristic(current_node.position,new_node.position) 
+            #print (new_node.g_temp)
+            # Append
+            if new_node.position[2]> 360:
+                    new_node.position[2] = new_node.position[2]-360
+            elif new_node.position[2]<0:
+                new_node.position[2] = 360 - abs(new_node.position[2])
             children.append(new_node)
     
-        
+        # Loop through children
         for neighbour in children:
-            
-            neighbour.position = list(neighbour.position)
-            #neighbour.position[0] = int(neighbour.position[0])
-            #neighbour.position[1] = int(neighbour.position[1])
-            
-            if neighbour.position in closed_list:
+            # check if child in closed set
+            neighbour.position = list(neighbour.position)            
+            if [int(neighbour.position[0]),int(neighbour.position[1]), neighbour.position[2]] in closed_list and neighbour.g_temp>=neighbour.g :
                 continue
-            candidateG = current_node.g + 1 + 300*obstacle(neighbour.position[0],neighbour.position[1],distance)
-            
-            
-            #temp = open_list
             
             temp = [[int(items.position[0]),int(items.position[1])] for items in open_list]
-            print (neighbour.position,temp)  
-            if [int(neighbour.position[0]),int(neighbour.position[1])] not in temp:
-                open_list.append(neighbour)
-            elif candidateG >=neighbour.g:
-                continue
+            # check if child in openset
+            if [int(neighbour.position[0]),int(neighbour.position[1])] not in temp or neighbour.g_temp<neighbour.g:
+                if neighbour.position[2]> 360:
+                    neighbour.position[2] = neighbour.position[2]-360
+                elif neighbour.position[2]<0:
+                    neighbour.position[2] = 360 - abs(neighbour.position[2])
+                
+                dis1 = heuristic(current_node.position,start_node.position)
+                dis2 = heuristic(neighbour.position,start_node.position)
+                if dis1< dis2:
+                    neighbour.parent = current_node
+                    neighbour.g = neighbour.g_temp
+                    neighbour.f = neighbour.g_temp + heuristic(neighbour.position,end_node.position)
+                    open_list.append(neighbour) 
+            
+            
 
-            neighbour.parent = current_node
-            neighbour.g = candidateG
-            neighbour.h = heuristic(neighbour.position,end_node.position)
-            neighbour.f = neighbour.g + neighbour.h
+            
+            
 
-
-
-def obstacle(x, y, distance):
-    index = 0
-    # circle
-    if ((x - 225) ** 2) + ((y - 150) ** 2) - ((25 + distance) ** 2) <= 0:
-        index = 1
-    #  ellipse200
-    if ((x - 150) / (40 + distance)) ** 2 + ((y - 100) / (20 + distance)) ** 2 - 1 <= 0:
-        index = 1
-    # quad
-    if (y - (3 / 5) * (x + distance) + ((475 / 5) - distance) <= 0) and (
-            y - (3 / 5) * (x - distance) + (625 / 5) + distance >= 0) and (
-            y + (3 / 5) * (x + distance) - (725 / 5) + distance >= 0) and (
-            y + (3 / 5) * (x - distance) - (875 / 5) - distance <= 0):
-        index = 1
-    # poly
-    if (y - 13 * (x + distance) + 140 - distance <= 0) and (y - 185 - distance <= 0) and (
-            y - (x - distance) - 100 + distance >= 0) and (5 * y - 7 * x - 400 >= 0):
-        index = 1
-    if (y + (7 / 5) * (x - distance) - (1450 / 5) - distance <= 0) and (
-            y - (6 / 5) * (x - distance) - (150 / 5) + distance >= 0) and (
-            y + (6 / 5) * (x + distance) - (1050 / 5) + distance >= 0) and (y - (7 / 5) * x - (400 / 5) <= 0):
-        index = 1
-    # rect
-    if (y - 1.732 * (x + distance) - 15.456864 - distance <= 0) and (
-            y + 0.577 * (x - distance) - 96.382696 - distance <= 0) and (
-            y - 1.732 * (x - distance) + 134.54 + distance >= 0) and (
-            y + 0.577 * (x + distance) - 84.815 + distance >= 0):
-        index = 1
-    return index
+def obstacle(x,y,distance):
+        index = 0
+        # circle
+        if ((x-225)**2)+((y-150)**2)-((25+distance)**2)<=0:
+            index=1
+        #  ellipse200
+        if ((x-150)/(40+distance))**2 + ((y - 100)/(20+distance))**2 - 1 <=0:
+            index=1
+        # quad
+        if (y-(3/5)*(x+distance)+((475/5)-distance) <=0) and (y-(3/5)*(x-distance)+(625/5)+distance>=0) and  (y+(3/5)*(x+distance)-(725/5)+distance>=0)and  (y+(3/5)*(x-distance)-(875/5)-distance <=0):
+            index=1
+        # poly
+        if (y-13*(x+distance)+140-distance <=0) and (y-185-distance <=0) and (y-(x-distance)-100+distance >=0) and (5*y-7*x-400 >=0) :
+            index=1
+        if (y+(7/5)*(x-distance)-(1450/5)-distance<=0) and (y-(6/5)*(x-distance)-(150/5)+distance>=0) and (y+(6/5)*(x+distance)-(1050/5)+distance>=0) and (y-(7/5)*x-(400/5) <=0):
+            index = 1
+        # rect
+        if(y - 1.732*(x+distance) - 15.456864 -distance<=0) and (y + 0.577*(x-distance) - 96.382696 -distance<= 0) and (y- 1.732*(x-distance) + 134.54+distance >= 0) and (y + 0.577*(x+distance) - 84.815+distance >= 0):
+            index = 1
+        return index
 
 def obstacle_plot(x,y):
         index = 0
@@ -168,10 +177,6 @@ def obstacle_plot(x,y):
         if(y - 1.732*x - 15.456864 <=0) and (y + 0.577*x - 96.382696 <= 0) and (y- 1.732*x + 134.54 >= 0) and (y + 0.577*x - 84.815 >= 0):
             index = 1
         return index
-
-
-
-
 
 def plotPygame(new_endgoal,visited,resolution=1):
         index = 1
@@ -228,38 +233,69 @@ def plotPygame(new_endgoal,visited,resolution=1):
         pygame.quit()
 
 
+
+
 def main():
+
     print("Enter robot parameters")
-    radius = int(input("radius =  "))
-    clearance = int(input("clearence =  "))
-    distance = radius + clearance
+    radius=int(input("radius =  "))
+    clearance=int(input("clearence =  "))
+    distance  = radius+clearance
     print("Enter initial node cordinates")
-    xi = int(input("x =  "))
-    yi = int(input("y =  "))
-
+    xi=int(input("x =  "))
+    yi=int(input("y =  "))
+    
     print("Enter goal node cordinates")
-    xg = int(input("x =  "))
-    yg = int(input("y =  "))
-
+    xg=int(input("x =  "))
+    yg=int(input("y =  "))
+    
     step = float(input("Step Size (between 0.5 and 10) =  "))
+    print (" Enter initial oritation")
+    theta = int(input("angle= "))
 
-    start = (xi, yi)
-    goal = (xg, yg)
+    start = [xi, yi, theta]
+    goal = (xg,yg)
 
-    maze = [[0] * 201 for i in range(301)]
-
+    maze = [[0]*201 for i in range(301)]
+    
     for i in range(301):
-        for j in range(201):
-            c = obstacle(i, j, distance)
-            if c == 1:
-                maze[i][j] = 1
-
-    if (obstacle(goal[0], goal[1], distance) == 1 or obstacle(start[0], start[1], distance)):
+            for j in range(201):
+                c=obstacle(i,j,distance)
+                if c==1:
+                    maze[i][j] = 1
+                    
+    #print (maze[52][52])
+    if (obstacle(goal[0],goal[1],distance)==1 or obstacle(start[0],start[1],distance)):
         sys.exit("Either goal node or start node lies inside obstacle or outside the workspace")
-    path = astar(maze, start, goal, distance, step)
+    path = astar(maze, start, goal,distance,step)
+    print (path)
+    plotPygame(path,path,resolution=1)
 
-    plotPygame(path, path, resolution=1)
 
 
 if __name__ == '__main__':
     main()
+
+
+'''
+            temp = [[int(items.position[0]),int(items.position[1])] for items in open_list]
+            # check if child in openset
+            if [int(neighbour.position[0]),int(neighbour.position[1])] not in temp or neighbour.g_temp<neighbour.g:
+                #print ('###########')
+                if neighbour.position[2]> 360:
+                    neighbour.position[2] = neighbour.position[2]-360
+                elif neighbour.position[2]<0:
+                    neighbour.position[2] = 360 - abs(neighbour.position[2])
+                    
+                open_list.append(neighbour)
+            else:
+                #print ('%%%%%%%%%%%%%%%%')
+                for i in range(len(open_list)):
+                    if open_list[i].position == neighbour.position:
+                        dis1 = heuristic(open_list[i].parent.position,start_node.position)
+                        dis2 = heuristic(neighbour.parent.position,start_node.position)
+                        if dis1< dis2:
+                            neighbour.parent = current_node
+                            neighbour.g = neighbour.g_temp
+                            neighbour.f = neighbour.g_temp + heuristic(neighbour.position,end_node.position)
+    '''
