@@ -266,7 +266,7 @@ def main():
     xg=int(input("x =  "))
     yg=int(input("y =  "))
     
-    step = float(input("Step Size (between 0.5 and 10) =  "))
+    step = float(input("Step Size (between 1 and 10) =  "))
     print (" Enter initial oritation")
     theta = int(input("angle= "))
 
