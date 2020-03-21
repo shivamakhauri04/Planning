@@ -216,7 +216,7 @@ def plotPygame(new_endgoal,visited, openList):
         pygame.display.set_caption("A star Robot") 
         clock = pygame.time.Clock()
         done = False
-
+        
         while not done:
             # fill the background
             for event in pygame.event.get():   
@@ -241,7 +241,7 @@ def plotPygame(new_endgoal,visited, openList):
                 points = [(new_endgoal[i][0],200*index-new_endgoal[i][1]),(new_endgoal[i+1][0],200*index-new_endgoal[i+1][1]),(new_endgoal[i+2][0],200*index-new_endgoal[i+2][1])]
                 pygame.draw.polygon(display, (255, 0, 0), points)
                 
-
+            
             pygame.display.flip()
             temp = input()
             pygame.time.wait(15000)

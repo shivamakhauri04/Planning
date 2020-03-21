@@ -6,23 +6,28 @@ A* is an informed search algorithm, or a best-first search, meaning that it is f
 
 ## Prerequisites
 The programs uses numpy, pygame ,time and math libraries. Hence, these libraries should be pre-installed. 
+To install Numpy : pip install numpy
+To install pygame : pip install pygame
 
 ## Demo Steps
 1.  Open Terminal 
 2.  Navigate to the extraced folder or git clone from the repo
 3.  Run the command for the python program
-    - ```python Astar_rigid.py``` 
-4. Enter Start point and End point, Movement step Size and initial robot orientation
-5. Enter radius and Clearance of the rigid robot
+    - ```python rigidRobot.py``` 
+4. Enter radius and Clearance of the rigid robot
+5. Enter Start point and End point, Movement step Size and initial robot orientation(theta) 
 
 ## Results
 
-Demo result for Point Robot from source (0,0) to (75,190) for step size = 5, radius = 1, step_size = 5 
+Demo result as asked for the Rigid Robot from source (50,50,60) to (150,150) 
+radius =1,clearance=1, step=1 takes 412 seconds to run
 
-![alt text](ex1.png)
+![alt text](ex2.gif)
+
+
 
 ## Notes 
-Time taken for the point robot to move from (0,0) to (300,200) using Astar for the given Action set =  315.653 sec (Calculated using Time package python)
+Time taken for the point robot to move from (0,0) to (300,200) using Astar for the given Action set =  1hour 58 mins (Calculated using Time package python)
 
 ## Authors
 Shivam Akhauri  
