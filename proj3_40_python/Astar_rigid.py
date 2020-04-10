@@ -32,9 +32,24 @@ def get_moves(theta,lw,rw) :
     moves = [[0,lw],[lw,0],[lw,lw],[0,rw],[rw,0],[rw,rw],[lw,rw],[rw,lw]]
     return moves
 
-def trajectory():
+def trajectory(X0,Y0,Theta0,UL,UR):
+    t = 0
+    r = 0.38
+    L = 3.54
+    dt = 0.1
+    Theta0 = 3.14 * Theta0 / 180
+    while t<1:
+        t = t + dt
+        X1 = X0
+        Y1 = Y0
+        X0 += r * (UL + UR) * math.cos(Theta0) * dt
+        Y0 += r * (UL + UR) * math.sin(Theta0) * dt
+        Theta0 += (r / L) * (UR - UL) * dt
+        plt.plot([X0, X1], [Y0, Y1], color="blue")
 
-    return
+    Theta0 = 180 * (Theta0) / 3.14
+    #points.append()
+    return [X0, Y0, Theta0]
 
 
 def astar(maze, start, end, distance, lw, rw):
