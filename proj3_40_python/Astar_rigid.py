@@ -27,7 +27,9 @@ def heuristic(start, goal):
     return math.sqrt(dx**2 + dy**2)
 
 
-def get_moves() :
+def get_moves(theta,lw,rw) :
+    # calculate the movement angles considering the orientations
+    moves = [[0,lw],[lw,0],[lw,lw],[0,rw],[rw,0],[rw,rw],[lw,rw],[rw,lw]]
     return moves
 
 def trajectory():
