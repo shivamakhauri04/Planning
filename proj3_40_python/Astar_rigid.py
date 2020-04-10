@@ -217,7 +217,57 @@ def obstacle_plot(x, y):
 
 
 def plotPygame(new_endgoal, visited, openList):
+    index = 40
 
+    observation = []
+    # read the obstacles and fill it in the pygame
+    for i in range(0, 10 * index, 1):
+        for j in range(0, 10 * index, 1):
+            c = obstacle_plot(i - 5, j - 5)
+            if c == 1:
+                observation.append([i, j])
+
+    state = np.array(observation)
+    observation = state * index
+    # print (new_endgoal)
+    path1 = np.array(new_endgoal)
+    new_endgoal = path1 * index
+    pygame.init()
+    # size of the pygame display
+    size = [10 * index, 10 * index]
+    display = pygame.display.set_mode(size)
+    pygame.display.set_caption("A star Robot")
+    clock = pygame.time.Clock()
+    done = False
+
+    while not done:
+        # fill the background
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                done = True
+        display.fill([0, 0, 0])
+        # fill the obstacles
+        for i in observation:
+            pygame.draw.rect(display, [200, 200, 255], [i[0], 10 * index - i[1], 5, 5])
+        # for i in visited:
+        #     pygame.draw.rect(display, [255, 255, 255], [i.position[0]*index, 10 * index - i.position[1]*index, 5, 5])
+        # for i in openList:
+        #     pygame.draw.rect(display, [255, 255, 255], [i.position[0]*index, 10 * index - i.position[1]*index, 5, 5])
+        # # pygame.display.flip()
+        clock.tick(20)
+        # # draw the shortest path in red
+        for j in new_endgoal:
+            pygame.time.wait(1)
+            pygame.draw.rect(display, [255, 0, 0], [j[0], 10 * index - j[1], 5, 5])
+            pygame.display.flip()
+        # for i in range(len(new_endgoal)-3):
+        #     points = [(new_endgoal[i][0],10-new_endgoal[i][1]),(new_endgoal[i+1][0],10-new_endgoal[i+1][1]),(new_endgoal[i+2][0],10-new_endgoal[i+2][1])]
+        #     pygame.draw.polygon(display, (255, 0, 0), points)
+
+        pygame.display.flip()
+        temp = input()
+        pygame.time.wait(15000)
+        done = True
 
     pygame.quit()
 
