@@ -133,8 +133,7 @@ def astar(maze, start, end, distance, lw, rw):
         # Loop through children
         for neighbour in children:
 
-            if [int(neighbour.position[0]), int(neighbour.position[1]),
-                neighbour.position[2]] in closed_list:
+            if [int(neighbour.position[0]), int(neighbour.position[1]),neighbour.position[2]] in closed_list:
                 continue
 
             temp = [[int(items.position[0]), int(items.position[1])] for items in open_list]
@@ -164,8 +163,20 @@ def astar(maze, start, end, distance, lw, rw):
                 open_list.append(neighbour)
 
 
-def obstacle_test(x, y, distance):
-
+def obstacle_test(x,y,distance):
+    index = 0
+    # Centre Circle
+    if(((x-5)**2)+((y-5)**2)-((1+distance)**2))<=0:
+        index = 1
+    #Upper right circle
+    if(((x-7)**2))+((y-8)**2)-((1+distance)**2)<=0:
+        index = 1
+    #Lower right circle
+    if(((x-7)**2))+((y-2)**2)-((1+distance)**2)<=0:
+        index = 1
+    #Lower left circle
+    if(((x-3)**2))+((y-2)**2)-((1+distance)**2)<=0:
+        index = 1
     return index
 
 
