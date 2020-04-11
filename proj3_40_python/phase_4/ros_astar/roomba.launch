@@ -10,10 +10,8 @@
         name="roombaRobot"
         type="roombaRobot.py"
         output="screen"
-	args = "$(arg xInitial) $(arg yInitial) $(arg xFinal) $(arg yFinal) $(arg lw) $(arg rw)"
+	args = "$(arg xInitial) $(arg yInitial) $(arg theta) $(arg xFinal) $(arg yFinal) $(arg lw) $(arg rw)"
     />
-    
-
 
 
 </launch>
