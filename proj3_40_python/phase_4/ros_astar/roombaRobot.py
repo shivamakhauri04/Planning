@@ -31,7 +31,7 @@ class GoForward():
 
         
         sleep(10)
-        step = [int(myargv[5]),int(myargv[6])]
+        step = [int(myargv[6]),int(myargv[7])]
         
 	# as long as you haven't ctrl + c keeping doing...
         while not rospy.is_shutdown():
@@ -81,7 +81,7 @@ class GoForward():
                                 # wait for 0.1 seconds (10 HZ) and publish again
                                 sleep(1)
 
-                                if index == 4 and int(self.myargv[3])==4  and int(self.myargv[4])==4:
+                                if index == 4 and int(self.myargv[4])==4  and int(self.myargv[5])==4:
                                         move_cmd.angular.z = 5 # 1.1
                                         self.cmd_vel.publish(move_cmd)
                                         sleep(1)

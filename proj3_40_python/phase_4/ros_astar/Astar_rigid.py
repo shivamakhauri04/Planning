@@ -311,17 +311,17 @@ def main(myargv):
     
     xi= int(myargv[1])
     yi= int(myargv[2])
-    theta = 0
+    theta = int(myargv[3])
     
     print("Enter goal node cordinates")
-    xg= int(myargv[3])
-    yg= int(myargv[4])
+    xg= int(myargv[4])
+    yg= int(myargv[5])
     
     #step = int(input("Step Size (between 1 and 10) =  "))
     
     print ("wheel RPM's")
-    lw = int(myargv[5])
-    rw = int(myargv[6])
+    lw = int(myargv[6])
+    rw = int(myargv[7])
 
 
 
