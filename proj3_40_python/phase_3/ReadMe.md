@@ -14,20 +14,16 @@ To install pygame : pip install pygame
 2.  Navigate to the extraced folder or git clone from the repo
 3.  Run the command for the python program
     - ```python Astar_rigid.py``` 
-4. Enter radius and Clearance of the rigid robot
-5. Enter Start point and End point, Movement step Size and initial robot orientation(theta) 
+4. Enter Clearance of the rigid robot
+5. Enter Start point and End point, initial robot orientation(theta) 
 
 ## Results
 
-Demo result as asked for the Rigid Robot from source (50,50,60) to (150,150) 
-radius =1,clearance=1, step=1 takes 412 seconds to run
+Demo result attached is from source (-4,-4,0) to (4,4) 
+,clearance=0.1
 
-![alt text](ex2.gif)
+![alt text](as1.gif)
 
-
-
-## Notes 
-Time taken for the point robot to move from (0,0) to (300,200) using Astar for the given Action set =  1hour 58 mins (Calculated using Time package python)
 
 ## Authors
 Shivam Akhauri  

@@ -5,6 +5,7 @@ import sys
 import math
 import time
 import matplotlib.pyplot as plt
+from time import sleep
 
 
 fig, ax = plt.subplots()
@@ -299,7 +300,7 @@ def obstacle_plot(x,y):
 
     return index
 
-def plotPygame(new_endgoal,actions):
+def plotPygame(new_endgoal,actions,cl,op):
         index = 40
         scale = 10
         observation = []
@@ -322,7 +323,7 @@ def plotPygame(new_endgoal,actions):
         pygame.display.set_caption("A star Robot") 
         clock = pygame.time.Clock()
         done = False
-        
+        temp = []
         while not done:
             # fill the background
             for event in pygame.event.get():   
@@ -332,15 +333,24 @@ def plotPygame(new_endgoal,actions):
             # fill the obstacles
             for i in observation:
                 pygame.draw.rect(display, [200,200,255], [i[0]*4,(10*scale-i[1])*4,5,5])
-            # for i in visited:
-            #     pygame.draw.rect(display, [255, 255, 255], [i.position[0]*index, 10 * index - i.position[1]*index, 5, 5])
-            # for i in openList:
-            #     pygame.draw.rect(display, [255, 255, 255], [i.position[0]*index, 10 * index - i.position[1]*index, 5, 5])
-            # # pygame.display.flip()
-            clock.tick(20)
+            for i in cl:
+                pygame.draw.rect(display, [255, 0, 0], [i.position[0]*40, 10 * index - i.position[1]*40, 3, 3])
+            for i in op:
+                #pygame.draw.line(display, [2, 25, 255], [[i.position[0]*40, 10 * index - i.position[1]*40],[i+1.position[0]*40, 10 * index - i+1.position[1]*40]], 3, 3])
+                temp.append([i.position[0],i.position[1]])
+            
+
+            for j in range(len(temp)):
+                # pygame.time.wait(1)
+                #print (new_endgoal[j][0])
+                pygame.draw.rect(display, [255,0,0], [temp[j][0]*40, 10*index-temp[j][1]*40, 3,3])
+                pygame.display.flip()
+
+            
+
+
+
             # # draw the shortest path in red
-            #print (new_endgoal)
-            #new_endgoal = new_endgoal[:-1]
             for j in range(len(new_endgoal)):
                 # pygame.time.wait(1)
                 #print (new_endgoal[j][0])
@@ -352,17 +362,11 @@ def plotPygame(new_endgoal,actions):
                     #for i in range(10):
                 
                     pts = trajectory_plot(x,y,theta,actions[j+1][0],actions[j+1][1])
-                    # trajectory(x,y,theta,actions[j+1][0],actions[j][1+1], 0)
 
                     for i in range(len(pts[0])):
                         pygame.draw.rect(display, [255,255,0], [pts[0][i]*40, 10*index-pts[1][i]*40, 3,3])
-                        
-                        #print (x,y,theta,actions[j][0],actions[j][1])
-
                 pygame.display.flip()
-            # for i in range(len(new_endgoal)-3):
-            #     points = [(new_endgoal[i][0],10-new_endgoal[i][1]),(new_endgoal[i+1][0],10-new_endgoal[i+1][1]),(new_endgoal[i+2][0],10-new_endgoal[i+2][1])]
-            #     pygame.draw.polygon(display, (255, 0, 0), points)
+
                 
             
             pygame.display.flip()
@@ -429,7 +433,8 @@ def main():
     goal = (xg+5,yg+5)
         
     begin = time.time()
-    path,_, _, actions = astar(maze, start, goal,distance, lw, rw)
+    path,cl, op, actions = astar(maze, start, goal,distance, lw, rw)
+    
     print (actions)
     end = time.time()
     print (end-begin)
@@ -439,7 +444,7 @@ def main():
     print (actions)
 
 
-    plotPygame(path,actions)
+    plotPygame(path,actions,op,cl)
 
 
 
